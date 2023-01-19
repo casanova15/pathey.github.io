@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      /* Add your CSS styles here */
+      /* Styling for the form elements */
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+      }
+      label {
+        font-size: 1.2em;
+        margin-bottom: 10px;
+      }
+      input[type="text"], input[type="file"] {
+        padding: 10px;
+        font-size: 1.2em;
+        margin-bottom: 20px;
+        border: none;
+        border-bottom: 2px solid #ccc;
+        width: 80%;
+      }
+      /* Styling for the image */
+      .image {
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        border: 10px solid white;
+        margin-bottom: 20px;
+      }
+      /* Styling for the name text */
+      .name {
+        font-size: 2em;
+        text-align: center;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        font-size: 1.2em;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+    </style>
+    <script>
+      function generatePoster() {
+        // Get the name and image from the form
+        var name = document.getElementById("name").value;
+        var image = document.getElementById("image").files[0];
+        
+        // Create a canvas element to draw the poster on
+        var canvas = document.createElement("canvas");
+        var ctx = canvas.getContext("2d");
+
+        // Create an image object from the template poster
+        var poster = new Image();
+        poster.src = "poster_template.png";
+
+        // Wait for the template poster to load
+        poster.onload = function() {
+          canvas.width = poster.width;
+          canvas.height = poster.height;
+          
+          // Draw the template poster on the canvas
+          ctx.drawImage(poster, 0, 0);
+          
+          // Create an image object from the uploaded image
+          var img = new Image();
+          img.src = URL.createObjectURL(image);
+          
+          // Wait for the uploaded image to load
+          img.onload = function() {
+            // Resize the image to fit on the poster
+            var imgWidth = 250;
+            var imgHeight = 250;
+            var imgX = (canvas.width - imgWidth) / 2;
+            var imgY = (canvas.height - imgHeight) / 2;
+            
+            // Draw the image with a round white border
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(imgX + (imgWidth / 2), imgY + (imgHeight / 2),imgWidth / 2, 0, 2 * Math.PI);
+            ctx.clip();
+            ctx.drawImage(img, imgX, imgY, imgWidth, imgHeight);
+            ctx.restore();
+                    // Set the font and font size for the name text
+        ctx.font = "36px Arial";
+        ctx.fillStyle = "white";
+        
+        // Calculate the position of the name text
+        var nameWidth = ctx.measureText(name).width;
+        var nameX = (canvas.width - nameWidth) / 2;
+        var nameY = imgY + imgHeight + 40;
+        
+        // Draw the name text on the poster
+        ctx.fillText(name, nameX, nameY);
+        
+        // Save the final poster as an image file
+        var link = document.createElement("a");
+        link.href = canvas.toDataURL();
+        link.download = "customized_poster.jpg";
+        link.click();
+      };
+    };
+  }
+</script>
+</head>
+  <body>
+    <form>
+      <label for="name">Name:</label>
+      <input type="text" id="name" required>
+      <br>
+      <label for="image">Image:</label>
+      <input type="file" id="image" accept="image/*" required>
+      <br>
+      <button type="button" onclick="generatePoster()">Generate Poster</button>
+    </form>
+  </body>
+</html>
