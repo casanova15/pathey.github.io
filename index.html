@@ -22,6 +22,19 @@
         border-bottom: 2px solid #ccc;
         width: 80%;
       }
+      /* Styling for the image */
+      .image {
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        border: 10px solid white;
+        margin-bottom: 20px;
+      }
+      /* Styling for the name text */
+      .name {
+        font-size: 2em;
+        text-align: center;
+      }
       button {
         padding: 10px 20px;
         background-color: #4CAF50;
@@ -44,7 +57,7 @@
 
         // Create an image object from the template poster
         var poster = new Image();
-        poster.src = "selfie.png";
+        poster.src = "poster_template.jpg";
 
         // Wait for the template poster to load
         poster.onload = function() {
@@ -53,18 +66,6 @@
           
           // Draw the template poster on the canvas
           ctx.drawImage(poster, 0, 0);
-          
-          // Set the font and font size for the name text
-          ctx.font = "36px Arial";
-          ctx.fillStyle = "white";
-          
-          // Calculate the position of the name text
-          var nameWidth = ctx.measureText(name).width;
-          var nameX = (canvas.width - nameWidth) / 2;
-          var nameY = canvas.height / 2;
-          
-          // Draw the name text on the poster
-          ctx.fillText(name, nameX, nameY);
           
           // Create an image object from the uploaded image
           var img = new Image();
@@ -75,24 +76,38 @@
             // Resize the image to fit on the poster
             var imgWidth = 250;
             var imgHeight = 250;
-            var imgX = (canvas.width - imgWidth) / 4;
-            var imgY = nameY + (nameWidth / 4);
+            var imgX = (canvas.width - imgWidth) / 2;
+            var imgY = (canvas.height - imgHeight) / 2;
             
-            // Draw the image
-
-            // Draw the image on the poster
+            // Draw the image with a round white border
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(imgX + (imgWidth / 2), imgY + (imgHeight / 2),imgWidth / 2, 0, 2 * Math.PI);
+            ctx.clip();
             ctx.drawImage(img, imgX, imgY, imgWidth, imgHeight);
-            
-            // Save the final poster as an image file
-            var link = document.createElement("a");
-            link.href = canvas.toDataURL();
-            link.download = "customized_poster.jpg";
-            link.click();
-          };
-        };
-      }
-    </script>
-  </head>
+            ctx.restore();
+                    // Set the font and font size for the name text
+        ctx.font = "36px Arial";
+        ctx.fillStyle = "white";
+        
+        // Calculate the position of the name text
+        var nameWidth = ctx.measureText(name).width;
+        var nameX = (canvas.width - nameWidth) / 2;
+        var nameY = imgY + imgHeight + 40;
+        
+        // Draw the name text on the poster
+        ctx.fillText(name, nameX, nameY);
+        
+        // Save the final poster as an image file
+        var link = document.createElement("a");
+        link.href = canvas.toDataURL();
+        link.download = "customized_poster.jpg";
+        link.click();
+      };
+    };
+  }
+</script>
+</head>
   <body>
     <form>
       <label for="name">Name:</label>
